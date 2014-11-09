@@ -27,7 +27,9 @@
     "sails-mongo": "~0.10.4",
     "waterline": "~0.10.12",
     "crypto": "latest",
-    "bcrypt": "latest"
+    "bcrypt": "latest",
+    "moment": "latest",
+    "agenda":"latest"
   },
   "scripts": {
     "start": "node app.js",

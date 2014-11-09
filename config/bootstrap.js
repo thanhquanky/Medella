@@ -60,10 +60,13 @@ module.exports.bootstrap = function(cb) {
 
       prescriptions.forEach(function(prescription) {
         prescription.drugs.forEach(function(drug) {
-          timeslot = drug.timeslot.split(":");
+	console.log(drug);
+	timeslots = drug.schedule;
+	timeslots.forEach(function(timeslot) {
+          timeslot = timeslot.split(":");
           var hour = parseInt(timeslot[0]);
           var minute = parseInt(timeslot[1]);
-          var medTime = new Date(currentYear, currentMonth, currentDay, hour, min, 0);
+          var medTime = new Date(currentYear, currentMonth, currentDay, hour, minute, 0);
           if (medTime > currentTime) {
             var delta = medTime - currentTime;
             var msec = delta;
@@ -72,9 +75,9 @@ module.exports.bootstrap = function(cb) {
             var mm = Math.floor(msec / 1000 / 60);
             if (hh === 0 && mm <= 5) {
               sendPushMessage(drug.name);
-              break;
             }
           }
+	})
         })
       })
     });
