@@ -15,15 +15,13 @@ var moment = require('moment-timezone');
 
 var apiKey = 'AIzaSyCWn5TuMlaoKsdFdZ243z8x2_zAqprbhUM';
 
-var timezoneNY = "America/New_York";
-var timezoneUTC = "Europe/Lisbon";
-
-
-function sendPushMessage(drugName) {
 var message = new gcm.Message();
 //API Server Key
 var sender = new gcm.Sender(apiKey);
 var registrationIds = [];
+var timezone = "America/New_York";
+
+function sendPushMessage(drugName) {
   // Value the payload data to send...
   message.addData('message',"You need to take " + drugName + " now");
   message.addData('title','Madella' );
@@ -55,9 +53,9 @@ module.exports.bootstrap = function(cb) {
     //User.remove({lastLogIn: { $lt: twoDaysAgo }}, done);
     Prescription.find().exec(function(err, prescriptions) {
 	var currentTime = moment();
-	console.log("Current time: " + currentTime.format("llll"));
+	console.log("Current time: " + currentTime.format("H:m:s"));
 	var next10Minutes = moment().add(10, 'minutes');
-	console.log("Next 10 min: " + next10Minutes.format("llll"));
+	console.log("Next 10 min: " + next10Minutes.format("H:m:s"));
       prescriptions.forEach(function(prescription) {
         prescription.drugs.forEach(function(drug) {
 	console.log(drug);
@@ -68,11 +66,9 @@ module.exports.bootstrap = function(cb) {
           var hour = parseInt(timeslot[0]);
           var minute = parseInt(timeslot[1]);
 	  console.log("Hour: " + hour + " minute: " + minute);
-          var medTime = moment({h: hour, m: minute}).add(5, 'hours');
-	  console.log("Med time: " + medTime.format("llll"));
-	  console.log("med > current: " + medTime >= currentTime);
-          console.log("med < next 10: " + medTime <= next10Minutes);
-          if (medTime.unix() >= currentTime.unix() && medTime.unix() <= next10Minutes.unix()) {
+          var medTime = moment({h: hour, m: minute});
+	  console.log("Med time: " + medTime.format("H:m:s"));
+          if (medTime >= currentTime && medTime <= next10Minutes) {
 		console.log("send message");
               sendPushMessage(drug.name);
           }
